@@ -1,0 +1,41 @@
+version: '2.1'
+services:
+  cadvisor:
+    command: ${CADVISOR_COMMAND:--storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=standalone.influxdb:8086}
+    container_name: ${CONTAINER_HOST_NAME:-standalone.cadvisor}
+    #environment:
+    hostname: ${CONTAINER_HOST_NAME:-standalone.cadvisor}
+    image: ${IMAGE_PREFIX:-google/}${IMAGE_NAME:-cadvisor}:${IMAGE_TAG:-v0.31.0}
+    labels:
+      deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
+      deploy.config.name: ${LABEL_DEPLOY_CONFIG_NAME:-unknown}
+      deploy.config.ref: ${LABEL_DEPLOY_CONFIG_REF:-unknown}
+      deploy.util.commit: ${LABEL_DEPLOY_UTIL_COMMIT:-unknown}
+      deploy.util.ref: ${LABEL_DEPLOY_UTIL_REF:-unknown}
+      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.cadvisor}
+      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/cadvisor/standalone}
+    networks:
+      local-network:
+        ipv4_address: 172.16.238.85
+        #ipv6_address: 2001:3984:3989::85
+    ports:
+    - "${EXTERNAL_CADVISOR_PORT:-9080}:${CADVISOR_PORT:-8080}"
+    privileged: true
+    restart: always
+    volumes:
+    - /:/rootfs:ro
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    - /var/run:/var/run:rw
+
+
+networks:
+  local-network:
+    external: true
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.238.0/24
+      #- subnet: 2001:3984:3989::/64
