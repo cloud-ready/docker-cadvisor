@@ -16,10 +16,10 @@ services:
       instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/cadvisor/standalone}
     networks:
       local-network:
-        ipv4_address: 172.16.238.85
-        #ipv6_address: 2001:3984:3989::85
+        ipv4_address: ${IPV4_ADDRESS:-172.16.238.85}
+        #ipv6_address: ${IPV6_ADDRESS:-2001:3984:3989::85}
     ports:
-    - "${EXTERNAL_CADVISOR_PORT:-9080}:${CADVISOR_PORT:-8080}"
+    - "${EXTERNAL_CADVISOR_8080_PORT:-9080}:8080"
     privileged: true
     restart: always
     volumes:
